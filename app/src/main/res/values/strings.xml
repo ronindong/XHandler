@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">XHandlerExample</string>
+    <string name="lbl_post_onworker">POST在工作线程</string>
+    <string name="lbl_post_onui">POST在UI主线程</string>
+    <string name="lbl_send_msg_onworker">SendMessage在工作线程</string>
+    <string name="lbl_send_msg_onui">SendMessage在UI线程</string>
+</resources>

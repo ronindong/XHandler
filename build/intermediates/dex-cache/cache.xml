@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/donghailong/AndroidStudioProjects/XHandler/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="9b78d7728aed8f5e65edc1ba066e2ca566fde8e3">
+        <dex dex="/Users/donghailong/AndroidStudioProjects/XHandler/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_afc13de24e702bf42e704996debbee773e86b75e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/donghailong/Library/Android/sdk/extras/m2repository/com/android/support/constraint/constraint-layout-solver/1.0.2/constraint-layout-solver-1.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="b9cd8fc6bd15cb915735d34535db30ece0c44603">
+        <dex dex="/Users/donghailong/AndroidStudioProjects/XHandler/app/build/intermediates/transforms/dex/debug/folders/1000/10/constraint-layout-solver-1.0.2_c71f9b3b068bf6dfef7c40e8ebb4c3f5263d88e9/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/donghailong/.android/build-cache/473ccf69eba7932ed88d5b8e274956da323aabc9/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
+        <dex dex="/Users/donghailong/AndroidStudioProjects/XHandler/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_6472ed312be0f11addb26f4d5957a10504395daa/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/donghailong/AndroidStudioProjects/XHandler/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
+        <dex dex="/Users/donghailong/AndroidStudioProjects/XHandler/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_35096979ba5ac74a876dd25e978782c58aaa9d0a/classes.dex" />
+    </item>
+
+</items>
