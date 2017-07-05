@@ -102,6 +102,7 @@ public class SlideLayout extends ViewGroup {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+
         int eventX = (int) ev.getX();
         int eventY = (int) ev.getY();
         int scrollX = getScrollX();

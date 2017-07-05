@@ -1,5 +1,6 @@
 package com.ronin.xhandler;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -7,6 +8,7 @@ import android.os.Message;
 import android.os.Process;
 import android.util.Printer;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,6 +20,7 @@ import java.util.concurrent.Executors;
  * (2)、可以配置工作线程的优先级，线程池的策略和大小。
  * (3)、可以很方便的在主线程和工作线程中进行切换
  * ------------------------------
+ * @Version：V1.0.0
  * @Author: ronindong
  * @Date: 2017/6/30.
  */
@@ -25,13 +28,25 @@ import java.util.concurrent.Executors;
 public class XHandler extends Handler {
 
     /**
+     * Context的弱引用处理
+     */
+    private WeakReference<? extends Context> mContextWeakReference;
+
+    /**
      * 工作线程handler
      */
     private Handler mHandler;
 
-    private WokerThread mWokerThread;
 
     public XHandler() {
+        init();
+    }
+
+    public XHandler(Context context) {
+        if (context == null) {
+            throw new NullPointerException("Context cannot be NullPointer!");
+        }
+        mContextWeakReference = new WeakReference<>(context);
         init();
     }
 
@@ -39,8 +54,7 @@ public class XHandler extends Handler {
      * 初始化work thread
      */
     private void init() {
-        mWokerThread = new WokerThread(this);
-
+        new WokerThread(this);
     }
 
     /**
@@ -190,19 +204,15 @@ public class XHandler extends Handler {
         /**
          * 工作线程的优先级
          */
-        private int mPriority;
-        /**
-         * 工作线程handler
-         */
-        private Handler mHandler;
+        private final int mPriority;
         /**
          * 线程池
          */
-        private static ExecutorService mService;
+        private ExecutorService mService;
         /**
          * 默认线程池大小
          */
-        private int nThreads = 5;
+        private final int nThreads = 5;
         private XHandler mXHandler;
 
         public WokerThread(XHandler xHandler) {
@@ -233,17 +243,6 @@ public class XHandler extends Handler {
             };
         }
 
-//        private Handler getWorkHandler() {
-//            return mHandler;
-//        }
-
-        public final void setThreadPoolStrategy(ExecutorService service) {
-            if (service == null) {
-                mService = Executors.newFixedThreadPool(5);
-            } else {
-                mService = service;
-            }
-        }
 
     }
 
