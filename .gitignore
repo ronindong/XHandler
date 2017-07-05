@@ -1,2 +1,4 @@
+.gradle/
+build/
 .idea/vcs.xml
 .idea/workspace.xml
