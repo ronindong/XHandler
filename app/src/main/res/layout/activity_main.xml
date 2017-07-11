@@ -33,6 +33,11 @@
             style="@style/BtnStyle"
             android:text="@string/lbl_send_msg_onui" />
 
+        <Button
+            android:id="@+id/btn_send_messenger_msg"
+            style="@style/BtnStyle"
+            android:text="@string/lbl_send_messenger_msg" />
+
     </LinearLayout>
 
 

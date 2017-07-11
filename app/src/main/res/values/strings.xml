@@ -4,4 +4,5 @@
     <string name="lbl_post_onui">POST在UI主线程</string>
     <string name="lbl_send_msg_onworker">SendMessage在工作线程</string>
     <string name="lbl_send_msg_onui">SendMessage在UI线程</string>
+    <string name="lbl_send_messenger_msg">发送跨进程Messenger消息</string>
 </resources>

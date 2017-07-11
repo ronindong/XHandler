@@ -1,10 +1,19 @@
 package com.ronin.example;
 
 import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Debug;
+import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.ronin.xhandler.XHandler;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -27,7 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private LinearLayout mLayout;
-    private Button btnPostOnWorker, btnPostOnUI, btnSendMsgOnWorker, btnSendMsgOnUI;
+    private Button btnPostOnWorker, btnPostOnUI,
+            btnSendMsgOnWorker, btnSendMsgOnUI, btnMesengerSendMsg;
 
     private XHandler mXHandler = new XHandler(this) {
         @Override
@@ -76,10 +89,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         mXHandler.postOnWorker(new Runnable() {
             @Override
@@ -87,16 +104,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //工作线程中模拟耗时操作，不影响UI线程的运行
                 simulateTimeout();
                 initView();
-
             }
         });
 
+        bindService();
 
         //UI线程中模拟耗时操作,APP启动会出现白屏
-        simulateTimeout();
+//        simulateTimeout();
         initView();
 
 
+    }
+
+    private Messenger mServiceMessenger;
+    private Messenger mClientMessenger = new Messenger(new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0x001) {
+                Log.e(TAG, "Client result: " + msg.arg1);
+            }
+            super.handleMessage(msg);
+        }
+    });
+
+
+    private boolean isConn = false;
+    private ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mServiceMessenger = new Messenger(service);
+            isConn = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceMessenger = null;
+            isConn = false;
+        }
+    };
+
+    private void bindService() {
+        Intent intent = new Intent(this, MessengerService.class);
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    }
+
+    private void sendMessengerMsg() {
+        try {
+            int a = 20 - (int) (Math.random() * 10);
+            int b = (int) (Math.random() * 10);
+            Message msg = Message.obtain(null, 0x001, a, b);
+            msg.replyTo = mClientMessenger;
+            if (isConn) {
+                Log.e(TAG, "a=" + a + ",b=" + b);
+                mServiceMessenger.send(msg);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -124,11 +188,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnPostOnUI = (Button) findViewById(R.id.btn_post_onui);
         btnSendMsgOnWorker = (Button) findViewById(R.id.btn_send_msg_onworker);
         btnSendMsgOnUI = (Button) findViewById(R.id.btn_send_msg_onui);
+        btnMesengerSendMsg = (Button) findViewById(R.id.btn_send_messenger_msg);
 
         btnPostOnWorker.setOnClickListener(this);
         btnPostOnUI.setOnClickListener(this);
         btnSendMsgOnWorker.setOnClickListener(this);
         btnSendMsgOnUI.setOnClickListener(this);
+        btnMesengerSendMsg.setOnClickListener(this);
 
         //测试模拟，控件初始化耗时
         for (int i = 0; i < 200; i++) {
@@ -181,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     simulateTimeout();
                     //耗时操作之后，从主线程切换到工作线程中
                     mXHandler.sendEmptyMessageOnWorker(MSG_02);
+
                 }
             });
         } else if (id == R.id.btn_send_msg_onworker) {
@@ -190,6 +257,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.btn_send_msg_onui) {
             mXHandler.sendEmptyMessage(MSG_01);
 
+        } else if (id == R.id.btn_send_messenger_msg) {
+            sendMessengerMsg();
         }
     }
 
@@ -199,4 +268,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mXHandler.removeCallbacksAndMessages(null);
         mXHandler.removeCallbacksAndMessagesOnWorker(null);
     }
+
+    private void loadResources(final String dexPath) {
+        AssetManager assetManager = null;
+        try {
+            assetManager = AssetManager.class.newInstance();
+
+            Method method = assetManager.getClass().getMethod("addAssetPath", String.class);
+            method.invoke(assetManager, dexPath);
+
+
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+
+        Resources res = getResources();
+        Resources resources = new Resources(assetManager,
+                res.getDisplayMetrics(), res.getConfiguration());
+
+
+    }
+
 }
