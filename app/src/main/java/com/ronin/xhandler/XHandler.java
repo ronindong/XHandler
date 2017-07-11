@@ -54,7 +54,7 @@ public class XHandler extends Handler {
      * 初始化work thread
      */
     private void init() {
-        new WokerThread(this);
+        WokerThread.getInstance(this);
     }
 
     /**
@@ -189,6 +189,20 @@ public class XHandler extends Handler {
      *
      */
     private static class WokerThread {
+
+        private static volatile WokerThread _inst;
+
+        public static WokerThread getInstance(XHandler xHandler) {
+            if (_inst == null) {
+                synchronized (WokerThread.class) {
+                    if (_inst == null) {
+                        _inst = new WokerThread(xHandler);
+                    }
+                }
+            }
+            return _inst;
+        }
+
         /**
          * 工作线程的名称
          */
@@ -215,7 +229,7 @@ public class XHandler extends Handler {
         private final int nThreads = 5;
         private XHandler mXHandler;
 
-        public WokerThread(XHandler xHandler) {
+        private WokerThread(XHandler xHandler) {
             this.mXHandler = xHandler;
 
             mPriority = Process.THREAD_PRIORITY_DEFAULT;
