@@ -35,7 +35,7 @@ public class XHandler extends Handler {
     /**
      * 工作线程handler
      */
-    private Handler mHandler;
+    private  Handler mHandler;
 
 
     public XHandler() {
@@ -54,7 +54,7 @@ public class XHandler extends Handler {
      * 初始化work thread
      */
     private void init() {
-        WokerThread.getInstance(this);
+        WokerThread.getInstance().start(this);
     }
 
     /**
@@ -110,6 +110,7 @@ public class XHandler extends Handler {
     public final boolean postOnWorker(Runnable r) {
         return postDelayedOnWorker(r, 0);
     }
+
 
     public final boolean postDelayedOnWorker(Runnable r, long delayMillis) {
         return mHandler.sendMessageDelayed(getPostMessage(r), delayMillis);
@@ -192,11 +193,11 @@ public class XHandler extends Handler {
 
         private static volatile WokerThread _inst;
 
-        public static WokerThread getInstance(XHandler xHandler) {
+        public static WokerThread getInstance() {
             if (_inst == null) {
                 synchronized (WokerThread.class) {
                     if (_inst == null) {
-                        _inst = new WokerThread(xHandler);
+                        _inst = new WokerThread();
                     }
                 }
             }
@@ -218,20 +219,22 @@ public class XHandler extends Handler {
         /**
          * 工作线程的优先级
          */
-        private final int mPriority;
+        private int mPriority;
         /**
          * 线程池
          */
-        private ExecutorService mService;
+        private static ExecutorService mService;
         /**
          * 默认线程池大小
          */
-        private final int nThreads = 5;
+        private final int nThreads = 10;
         private XHandler mXHandler;
 
-        private WokerThread(XHandler xHandler) {
-            this.mXHandler = xHandler;
+        private WokerThread() {
+        }
 
+        public final void start(XHandler xHandler) {
+            this.mXHandler = xHandler;
             mPriority = Process.THREAD_PRIORITY_DEFAULT;
             mHandlerThread = new HandlerThread(NAME_WORKER_THREAD, mPriority);
             mHandlerThread.start();
@@ -257,6 +260,12 @@ public class XHandler extends Handler {
             };
         }
 
+
+        public static void post(Runnable r){
+            if (mService != null) {
+                mService.execute(r);
+            }
+        }
 
     }
 
