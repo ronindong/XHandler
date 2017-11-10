@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/XHandler.iml" filepath="$PROJECT_DIR$/XHandler.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/speedlib/speedlib.iml" filepath="$PROJECT_DIR$/speedlib/speedlib.iml" />
     </modules>
   </component>
 </project>

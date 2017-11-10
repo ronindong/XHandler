@@ -1,5 +1,6 @@
 package com.ronin.example;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //UI线程中模拟耗时操作,APP启动会出现白屏
 //        simulateTimeout();
         initView();
-
+        Activity activity;
 
     }
 
